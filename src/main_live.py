@@ -8,7 +8,7 @@ from helpers import LiveDataHandler
 
 
 def main():
-    data_handler = LiveDataHandler(port='COM102')
+    data_handler = LiveDataHandler(port='COM3')
 
     theta = np.deg2rad(0)
     init_X = np.array([np.cos(theta/2), 0*np.sin(theta/2), 0*np.sin(theta/2), 1*np.sin(theta/2)])
@@ -32,7 +32,7 @@ def main():
             # get measurements
             u, Z = data_handler.get_measurement()
 
-            print(f'{u[0]:.2f}  {u[1]:.2f}  {u[2]:.2f}')
+            print(f'gx: {u[0]:.2f}\tgy: {u[1]:.2f}\tgz: {u[2]:.2f}\tax: {Z[0]:.2f}\tay: {Z[1]:.2f}\taz: {Z[2]:.2f}')
 
             # predict step
             observer.predict(u)

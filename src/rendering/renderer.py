@@ -14,7 +14,7 @@ from helpers.data_handler import*
 
 class Renderer(wx.Frame):
     def __init__(self, data_handler):
-        super().__init__(parent=None, title='Static MF Compensation - Visualisation Tool', size=(800, 600))
+        super().__init__(parent=None, title='Position Estimation - Visualisation Tool', size=(800, 600))
         self.data_handler = data_handler
 
         self.initialized = False
