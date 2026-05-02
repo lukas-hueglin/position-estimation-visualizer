@@ -51,11 +51,17 @@ class LiveRenderer(Renderer):
         # call parent draw function
         super().draw()
 
-        quat = self.data_handler.get_result('x')
+        # get new state
+        state = self.data_handler.get_result('x')
 
-        theta = np.deg2rad(45)
-        init_X = np.array([np.cos(theta/2), 0*np.sin(theta/2), 0*np.sin(theta/2), 1*np.sin(theta/2)])
-        self.draw_buffer(self.rotationVertexArray, Cube, (0, 0, 0), quat, (1, 1, 1))
+        if len(state) == 4:
+            quat = state
+            pos = (0, 0, 0)
+        else:
+            quat = state[:4]
+            pos = state[4:7]*10
+
+        self.draw_buffer(self.rotationVertexArray, Cube, pos, quat, (1, 1, 1))
         
         # draw lines
         #z = self.data_handler.get_result('z', self.slider.GetValue())
@@ -65,6 +71,7 @@ class LiveRenderer(Renderer):
         #self.draw_line((0, 0, 0), quat_transform_point(q_pred, m))
         #self.draw_line((0, 0, 0),  m)
         
+        #self.draw_line((0, 0, 0), 100*state[7:])
         #self.draw_line((0, 0, 0), 100*quat_transform_point(quat_conj(q_pred), z[:3]))
         #self.draw_line((0, 0, 0), 100*quat_transform_point(quat_conj(q_pred), hx[:3]))
         #self.draw_line((0, 0, 0), 100*quat_transform_point(quat_conj(q_pred), z[3:]))

@@ -46,18 +46,11 @@ def ieee_754_conversion(n, sgn_len=1, exp_len=8, mant_len=23):
     return sign_mult * (2 ** exponent) * mant_mult
 
 class LiveDataHandler(DataHandler):
-    def __init__(self, port):
+    def __init__(self, port, deltatime):
         super().__init__()
-        self.n_samples = 3
-        self.deltatime = 0.01
+        self.deltatime = deltatime
         self.has_started = True # always started
         self.init = False
-
-        radps_fullscale = 1000/180 * np.pi
-        self.radps_per_LSB = radps_fullscale / 32768.0
-
-        mps2_fullscale = 9.81 * 2
-        self.mps2_per_LSB = mps2_fullscale / 32768.0
 
         self.serial = serial.Serial(port, baudrate=115200)
         self.init = True
@@ -99,7 +92,7 @@ class LiveDataHandler(DataHandler):
         acc_y = ieee_754_conversion(bytes[7] << 24 | bytes[6] << 16 | bytes[5] << 8 | bytes[4])
         acc_z = ieee_754_conversion(bytes[11] << 24 | bytes[10] << 16 | bytes[9] << 8 | bytes[8])
         
-        return 2*np.array([gyro_y, -gyro_x, gyro_z]), np.array([acc_y, acc_x, acc_z])
+        return np.array([gyro_y, -gyro_x, gyro_z]), np.array([acc_y, -acc_x, acc_z])
     
     def get_result(self, key):
         return self.results[key][-1]

@@ -3,7 +3,6 @@ import numpy as np
 class DataHandler:
     def __init__(self):
         self.deltatime = 1
-        self.n_samples = 1
     
         self.acc = np.array([])
         self.gyro = np.array([])
