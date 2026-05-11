@@ -17,7 +17,7 @@ class LiveRenderer(Renderer):
 
         # OpenGL variable
         self.view_matrix = pyrr.matrix44.create_look_at(
-            np.array([0.0, -3.0, 3.0]),
+            np.array([0.0, -9.0, 9.0]),
             np.array([0.0, 0.0, 0.0]),
             np.array([0.0, 0.0, 1.0])).T
         self.proj_matrix = pyrr.matrix44.create_perspective_projection(

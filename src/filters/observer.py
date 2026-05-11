@@ -20,8 +20,16 @@ class Observer:
         self.R = lambda x: 0
 
     def predict(self, u):
+        C = np.array([[self.X[0]**2 + self.X[1]**2 - self.X[2]**2 - self.X[3]**2, -2*self.X[0]*self.X[3] + 2*self.X[1]*self.X[2], 2*self.X[0]*self.X[2] + 2*self.X[1]*self.X[3]], [2*self.X[0]*self.X[3] + 2*self.X[1]*self.X[2], self.X[0]**2 - self.X[1]**2 + self.X[2]**2 - self.X[3]**2, -2*self.X[0]*self.X[1] + 2*self.X[2]*self.X[3]], [-2*self.X[0]*self.X[2] + 2*self.X[1]*self.X[3], 2*self.X[0]*self.X[1] + 2*self.X[2]*self.X[3], self.X[0]**2 - self.X[1]**2 - self.X[2]**2 + self.X[3]**2]])
+        g = np.array([0, 0, 9.81])
+        t = C @ u[3:6] - g
+
+        print(np.linalg.norm(t))
+        if (np.linalg.norm(t) < 0):
+            u[3:6] = g
+            u[6:9] = g
         self.X_priori = self.f(self.X, u)
-        self.P_priori = self.F(self.X, u) @ self.P @ self.F(self.X, u).T + self.Q(self.X)
+        self.P_priori = self.F(self.X, u) @ self.P @ self.F(self.X, u).T + self.Q(self.X, u)
 
     def update(self, Z):
         V = Z - self.h(self.X_priori)

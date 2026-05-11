@@ -4,6 +4,7 @@ import numpy as np
 
 from filters import Kalman_v1
 from filters import Kalman_v2
+from filters import Kalman_v3
 from rendering import LiveRenderer
 from helpers import LiveDataHandler
 
@@ -20,7 +21,7 @@ def main():
     init_P = np.identity(10) * 1e-12 # best for few samples
 
     # create kalman filter
-    observer = Kalman_v2(data_handler, init_X, init_P)
+    observer = Kalman_v3(data_handler, init_X, init_P)
 
     # create app
     def create_app():
@@ -32,8 +33,12 @@ def main():
     t = threading.Thread(target=create_app)
     t.start()
 
+    acc_old = np.zeros(3)
+    q_old = np.array([np.cos(theta/2), 0*np.sin(theta/2), 0*np.sin(theta/2), 1*np.sin(theta/2)])
     try:
         while t.is_alive():
+            q_temp = data_handler.get_result('x')[:4]
+
             # get measurements
             gyro, acc = data_handler.get_measurement()
             
@@ -41,14 +46,17 @@ def main():
 
             # predict step
             #observer.predict(gyro)
-            observer.predict(np.hstack([gyro, acc]))
+            observer.predict(np.hstack([gyro, acc, acc_old, q_old]))
 
             # update step
             observer.update(acc)
+            
+            acc_old = acc
+            q_old = q_temp
     except KeyboardInterrupt:
         pass
 
-    t.join()
+    t.join() 
 
 
 if __name__ == '__main__':
