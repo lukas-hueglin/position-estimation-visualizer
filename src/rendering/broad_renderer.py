@@ -43,12 +43,19 @@ class BroadRenderer(Renderer):
         # call parent draw function
         super().draw()
 
-        # draw cubes
-        q_pred = self.data_handler.get_result('x', self.slider.GetValue())
-        self.draw_buffer(self.predictionVertexArray, Cube, (0, 0, 0), q_pred, (1, 1, 1))
+        # get new state
+        state = self.data_handler.get_result('x', self.slider.GetValue())
 
-        q_val = self.data_handler.get_validation(self.slider.GetValue())
-        self.draw_buffer(self.validationVertexArray, Cube, (0, 0, 0), q_val, (1.5, 1.5, 1.5))
+        if len(state) == 4:
+            q_pred = state
+            r_pred = (0, 0, 0)
+        else:
+            q_pred = state[:4]
+            r_pred = state[4:7]*10
+        self.draw_buffer(self.predictionVertexArray, Cube, r_pred, q_pred, (1, 1, 1))
+
+        q_val, r_val = self.data_handler.get_validation(self.slider.GetValue())
+        self.draw_buffer(self.validationVertexArray, Cube, r_val, q_val, (1.5, 1.5, 1.5))
         
         # draw lines
         #z = self.data_handler.get_result('z', self.slider.GetValue())

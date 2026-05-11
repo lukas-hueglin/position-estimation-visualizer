@@ -21,13 +21,14 @@ class BroadDataHandler(DataHandler):
         self.acc = np.array(f['imu_acc'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
         self.gyro = np.array(f['imu_gyr'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
         self.mag = np.array(f['imu_mag'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
-        self.valid = np.array(f['opt_quat'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
+        self.valid_quat = np.array(f['opt_quat'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
+        self.valid_pos = np.array(f['opt_pos'])[(real_n_samples-self.n_samples)//2: (real_n_samples+self.n_samples)//2]
 
     def get_measurement(self, time):
         return self.gyro[time], self.acc[time]
 
     def get_validation(self, time):
-        return self.valid[time]
+        return self.valid_quat[time], self.valid_pos[time]
 
     def plot(self):
         quat = [['quatW'], ['quatX'], ['quatY'], ['quatZ']]
@@ -80,7 +81,7 @@ class BroadDataHandler(DataHandler):
         time = np.linspace(0, self.n_samples*self.deltatime, self.n_samples)
         
         # plot error
-        error = np.array(list(map(angle_between_quat, self.valid, self.results['x'])))
+        error = np.array(list(map(angle_between_quat, self.valid_quat, self.results['x'])))
         axd['error'].plot(time, error)
         ax_deg = axd['error'].twinx()
         ax_deg.plot(time, 180*error/np.pi)
@@ -88,7 +89,7 @@ class BroadDataHandler(DataHandler):
 
         # plot quaternion of validation and real
         for i, s in enumerate(['W', 'X', 'Y', 'Z']):
-            axd['quat'+s].plot(time, self.valid[:, i], label='Validation', color=colors[i][0])
+            axd['quat'+s].plot(time, self.valid_quat[:, i], label='Validation', color=colors[i][0])
             axd['quat'+s].plot(time, np.array(self.results['x'])[:, i], label='Kalman', color=colors[i][1])
 
         # plot covariances
