@@ -66,7 +66,7 @@ class Kalman_v2(Observer):
             [0, 0, 0, 0.044**2, 0, 0],
             [0, 0, 0, 0, 0.05**2, 0],
             [0, 0, 0, 0, 0, 0.074**2]
-        ]) @ self.W(x).T
+        ]) @ self.W(x, u).T
 
         self.R = lambda x: np.array([
             [0.044**2, 0, 0],

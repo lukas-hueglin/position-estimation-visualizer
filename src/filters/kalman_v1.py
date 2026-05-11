@@ -35,18 +35,18 @@ class Kalman_v1(Observer):
             [   g[0]*x[2] -   g[1]*x[1] + 2*g[2]*x[0],   g[0]*x[3] - g[1]*x[0],             g[0]*x[0] +   g[1]*x[3],              g[0]*x[1] + g[1]*x[2] + 2*g[2]*x[3]]
             ])
 
-        self.W = lambda x: dt/2 * np.array([
+        self.W = lambda x, u: dt/2 * np.array([
             [-x[1], -x[2], -x[3]],
             [x[0], -x[3], x[2]],
             [x[3], x[0], -x[1]],
             [-x[2], x[1], x[0]],
         ])
 
-        self.Q = lambda x: self.W(x) @ np.array([
+        self.Q = lambda x, u: self.W(x, u) @ np.array([
             [0.001745**2, 0, 0],
             [0, 0.001571**2, 0],
             [0, 0, 0.002094**2],
-        ]) @ self.W(x).T
+        ]) @ self.W(x, u).T
 
         self.R = lambda x: np.array([
             [0.044**2, 0, 0],

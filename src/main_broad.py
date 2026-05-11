@@ -3,6 +3,7 @@ import numpy as np
 
 from filters import Kalman_v1
 from filters import Kalman_v2
+from filters import Kalman_v3
 from rendering import BroadRenderer
 from helpers import BroadDataHandler
 
