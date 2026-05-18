@@ -8,3 +8,4 @@ imageio >= 2.37.3
 pyserial >= 3.5
 h5py >= 3.16.0
 sympy >= 1.14.0
+scipy >= 1.17.1

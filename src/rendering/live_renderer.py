@@ -12,22 +12,34 @@ from rendering.figures import Cube
 from rendering.renderer import Renderer
 
 class LiveRenderer(Renderer):
-    def __init__(self, data_handler):
+    def __init__(self, data_handler, rotation_only):
         super().__init__(data_handler)
 
+        # set rotation only
+        self.rotation_only = rotation_only
+
         # OpenGL variable
-        self.view_matrix = pyrr.matrix44.create_look_at(
-            np.array([0.0, -9.0, 9.0]),
-            np.array([0.0, 0.0, 0.0]),
-            np.array([0.0, 0.0, 1.0])).T
-        self.proj_matrix = pyrr.matrix44.create_perspective_projection(
-            45, (800/600), 0.1, 200.0).T
+        if self.rotation_only:
+            self.view_matrix = pyrr.matrix44.create_look_at(
+                np.array([0.0, -3.0, 3.0]),
+                np.array([0.0, 0.0, 0.0]),
+                np.array([0.0, 0.0, 1.0])).T
+            self.proj_matrix = pyrr.matrix44.create_perspective_projection(
+                45, (800/600), 0.1, 200.0).T
+        else:
+            self.view_matrix = pyrr.matrix44.create_look_at(
+                np.array([0.0, -10.0, 10.0]),
+                np.array([0.0, 0.0, 0.0]),
+                np.array([0.0, 0.0, 1.0])).T
+            self.proj_matrix = pyrr.matrix44.create_perspective_projection(
+                45, (800/600), 0.1, 200.0).T
 
         # add self updating functionality
         def loop():
             while True:
                 self.Refresh()
                 time.sleep(1.0/30)
+
 
         self.thread = threading.Thread(target=loop)
         self.thread.start()
@@ -54,7 +66,7 @@ class LiveRenderer(Renderer):
         # get new state
         state = self.data_handler.get_result('x')
 
-        if len(state) == 4:
+        if self.rotation_only:
             quat = state
             pos = (0, 0, 0)
         else:
